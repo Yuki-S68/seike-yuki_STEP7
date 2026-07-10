@@ -231,14 +231,20 @@ CREATE INDEX idx_product_id ON order_items(product_id);
 -- 設問19: ユーザーごとの平均金額を取得
 SELECT 
     users.name,
-    AVG(products.price * order_items.quantity) AS avg_price
-FROM users
-JOIN orders
-    ON users.id = orders.user_id
-JOIN order_items
-    ON orders.id = order_items.order_id
-JOIN products
-    ON products.id = order_items.product_id
+    AVG(order_total) AS avg_order_amount
+FROM (
+    SELECT
+        orders.user_id,
+        SUM(products.price * order_items.quantity) AS order_total
+        FROM orders
+        JOIN order_items
+            ON orders.id = order_items.order_id
+        JOIN products
+            ON order_items.product_id = products.id
+        GROUP BY orders.id
+) AS sub
+JOIN users
+    ON users.id = sub.user_id
 GROUP BY users.name;
 
 -- 設問20: 各ユーザーの最新注文日のみを取得
