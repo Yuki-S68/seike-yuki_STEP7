@@ -153,7 +153,7 @@ LIMIT 1;
 -- 設問10: 各商品が何回注文されたかを取得
 SELECT 
     products.product_name,
-    SUM(order_items.quantity) AS total_quantity
+    COUNT(order_items.id) AS order_count
 FROM products
 JOIN order_items
     ON products.id = order_items.product_id
